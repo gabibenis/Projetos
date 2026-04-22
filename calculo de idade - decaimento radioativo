@@ -1,0 +1,13 @@
+def main():
+  massai = float(input('Digite a massa inicial estimada (g): '))
+  massaf = float(input('Digite a massa final (g): '))
+  vida = float(input('Digite a meia-vida (anos): '))
+  tempo = 0
+  while massai > massaf:
+      tempo += 1
+      massai = (massai)/2
+  else:
+    t1 = int((tempo -1)*vida)
+    t2 = int((tempo)*vida)
+  print(f'Estimo que a idade procurada está entre {t1} e {t2} anos.')
+main()
