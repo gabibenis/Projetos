@@ -1,0 +1,172 @@
+import pandas as pd
+
+# --- CARREGAMENTO DE DADOS ---
+# Esta função já está implementada e é responsável por carregar os dados, não altere.
+def carregar_dados(url):
+    """
+    Carrega os dados da planilha e retorna como uma lista de listas.
+    A primeira linha (cabeçalho) é ignorada.
+    """
+    df = pd.read_csv(url)
+    reservas = df.values.tolist()
+    return reservas
+
+# --- OPERAÇÕES---
+# As funções abaixo já estão declaradas, mas o corpo precisa ser implementado.
+# Não altere os nomes nem os parâmetros das funções.
+
+#############################################
+def listar_reservas(reservas):
+    """
+    Opção 1: Lista todas as reservas com suas informações detalhadas.
+    Acessa os elementos da sublista pelo índice para imprimir os dados.
+    """
+    # Adicione seu código aqui.
+    print('--- LISTAGEM DE RESERVAS ---')
+    for coluna in reservas:
+      print()
+      print(f'ID Reserva: {coluna[0]}')
+      print(f'ID Solicitante: {coluna[1]}')
+      print(f'Solicitante: {coluna[2]}')
+      print(f'Categoria: {coluna[3]}')
+      print(f'Data de Início: {coluna[4]}')
+      print(f'Data de Fim: {coluna[8]}')
+      print(f'Valor da Diária: R$ {coluna[12]:.2f}')
+      print(f'Desconto: R$ {coluna[13]:.2f}')
+      print(f'Valor Total: R$ {coluna[14]:.2f}') #olhar como foi feito a formatação dos valores
+
+################################################
+def filtrar_por_categoria(reservas):
+    """
+    Opção 2: Solicita uma categoria e lista as reservas que pertencem a ela.
+    """
+    # Adicione seu código aqui.
+    categoria = input('Digite a categoria desejada (Externo/USP): ')
+    if categoria == 'Externo':
+      print('--- RESERVAS DA CATEGORIA EXTERNO ---')
+    if categoria == 'USP':
+      print('--- RESERVAS DA CATEGORIA USP ---')
+    for coluna in reservas:
+      if categoria == 'Externo' and coluna[3] == 'Externo':
+        print()
+        print(f'ID Reserva: {coluna[0]}')
+        print(f'Solicitante: {coluna[2]}')
+        print(f'Data de Início: {coluna[4]}')
+        print(f'Data de Fim: {coluna[8]}')
+      elif categoria == 'USP' and coluna[3] == 'USP':
+        print()
+        print(f'ID Reserva: {coluna[0]}')
+        print(f'Solicitante: {coluna[2]}')
+        print(f'Data de Início: {coluna[4]}')
+        print(f'Data de Fim: {coluna[8]}')
+
+########################################################
+def calcular_total_arrecadado(reservas):
+    """
+    Opção 3: Calcula e exibe o valor total arrecadado por categoria.
+    """
+    # Adicione seu código aqui.
+    print('--- VALOR ARRECADADO POR CATEGORIA ---')
+    valorUSP = 0
+    valorExterno = 0
+    for coluna in reservas:
+      if coluna[3] == 'Externo':
+        valorExterno += coluna[14]
+      else:
+        valorUSP += coluna[14]
+    print(f'Categoria USP: R$ {valorUSP:.2f}')
+    print(f'Categoria Externo: R$ {valorExterno:.2f}')
+
+###############################################333
+def exibir_estatisticas(reservas):
+    """
+    Opção 4: Calcula e exibe estatísticas gerais, como média de diárias e
+    percentual de reservas com desconto.
+    """
+    # Adicione seu código aqui.
+    print('--- ESTATÍSTICAS GERAIS ---')
+    dias = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] #dias de cada mes
+    contagem = 0 #já considera desde o 1º dia
+    clientes = 0 #ou len(reservas[0])?
+    nDesconto = 0
+    #conatagem de dias
+    for coluna in reservas:
+      anoI = coluna[7]
+      anoF = coluna[11]
+      mesI = coluna[6]
+      mesF = coluna[10]
+      diaI = coluna[5]
+      diaF = coluna[9]
+      contagem += diaF - diaI + 1 #normaliza os dias do 1º e ultimo mes (se meses iguais de eanos iguais, tambem resolve)
+      while anoI < anoF: #normalizar anos
+        while mesI <= 12: 
+          contagem += dias[mesI]
+          mesI += 1
+        anoI += 1
+        mesI = 1
+      while mesI < mesF: #normalizar meses
+        contagem += dias[mesI]
+        mesI += 1
+    #contagem de descontos aplicados
+    for coluna in reservas:
+      if coluna[13] != 0:
+        nDesconto += 1
+    #contagem de clientes
+    for coluna in reservas:    #ou len(reservas[0])?
+      if clientes < coluna[0]:
+        clientes = coluna[0]
+    #dados calculados
+    medDias = contagem/clientes
+    porcentual = nDesconto/clientes *100
+    #dados impressos
+    print(f'Média de diárias por reserva: {medDias} dias')
+    print(f'Percentual de reservas com desconto: {round(porcentual)}%')
+
+##################################################
+
+# --- FUNÇÃO PRINCIPAL ---
+def main():
+    """
+    Função principal que gerencia o fluxo do programa.
+    """
+    # Esta linha já está pronta. Não a altere.
+    reservas = carregar_dados('https://raw.githubusercontent.com/rmcesarjr/iccd/main/data/reservas.csv')
+
+    # Adicione seu código aqui.
+    operacao = '5'
+    inicio = '0'
+    while operacao  != '0':
+      if operacao == '1':
+        listar_reservas(reservas)
+        operacao = '5'
+        inicio = '0'
+      elif operacao == '2':
+        filtrar_por_categoria(reservas)
+        operacao = '5'
+        inicio = '0'
+      elif operacao == '3':
+        calcular_total_arrecadado(reservas)
+        operacao = '5'
+        inicio = '0'
+      elif operacao == '4':
+        exibir_estatisticas(reservas)
+        operacao = '5'
+        inicio = '0'
+      else:
+       if inicio == '1':
+          print('Operação inválida. Tente novamente.')
+          print()
+       print('--- MENU DE OPERAÇÕES ---')
+       print('1 - Listar todas as reservas')
+       print('2 - Filtrar por categoria')
+       print('3 - Calcular totais de arrecadação')
+       print('4 - Exibir estatísticas gerais')
+       print('0 - Sair')
+       operacao = input('Digite o número da operação desejada: ')
+       inicio = '1'
+    print('Encerrando o programa.')
+
+# --- EXECUÇÃO DO PROGRAMA ---
+# Esta parte do código já está pronta e garante que o programa comece.
+if __name__ == "__main__":
+    main()
