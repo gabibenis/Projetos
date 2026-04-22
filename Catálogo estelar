@@ -1,0 +1,583 @@
+import pandas as pd
+import math
+
+#==============================================================================#
+#                        FUNÇÕES QUE DEVOLVEM VALORES                          #
+#==============================================================================#
+"""
+!!!                    IMPLEMENTE AS FUNÇÕES DESTA SEÇÃO                     !!!
+"""
+def gera_estatisticas_gerais(catalogo):
+    """
+    Gera estatísticas gerais sobre um catálogo de estrelas. As estatísticas
+    gerais são:
+      - Número total de estrelas
+      - Massa total das estrelas
+      - Temperatura média das estrelas
+      - Mediana da luminosidade das estrelas
+
+    As estatísticas gerais são devolvidas em um dicionário (dict) na forma:
+    ```
+    {
+        "total_estrelas": <n-total-estrelas>,
+        "massa_total": <massa-total-estrelas>,
+        "temperatura_media": <temperatura-media>,
+        "mediana_luminosidade": <mediana-luminosidade>
+    }
+    ```
+
+    IMPORTANTE: siga rigorosamente o formato do dicionário descrito acima, isto
+    é, defina as chaves com nomes idênticos aos de acima.
+
+    Parâmetros:
+      * catalogo (pandas.DataFrame): dataframe com catálogo de estrelas.
+
+    Devolve:
+      * estatisticas_gerais (dict): dicionário com estatísticas gerais.
+
+    Dicas:
+      * Use as funções `len()`, `mean()`, `median()` e `sum()`.
+      * Não se preocupe em arredondar os valores.
+    """
+    ### inicio
+    total_estrelas = len(catalogo)
+    massa_total = catalogo['massa'].sum()
+    temperatura_media = catalogo['temperatura'].mean()
+    mediana_luminosidade = catalogo['luminosidade'].median()
+
+    estatisticas_gerais = {
+        "total_estrelas": total_estrelas,
+        "massa_total": massa_total,
+        "temperatura_media": temperatura_media,
+        "mediana_luminosidade": mediana_luminosidade
+        }
+    return  estatisticas_gerais
+
+def imprime_estatisticas_gerais(estatisticas_gerais):
+    """
+    Imprime estatísticas gerais sobre o catálogo estelar.
+
+    IMPORTANTE: assuma que o formato do dicionário passado como argumento segue
+    o mesmo descrito na função `gera_estatisticas_gerais()`
+
+    Parâmetros:
+      * estatisticas_gerais (dict): dicionário com estatísticas gerais.
+
+    Dicas:
+      * A massa total é impressa em "sóis", isto é, a massa total da galáxia é
+        igual a um múltiplo inteiro da massa do sol. Lembre-se que o campo
+        `massa` do catálogo é expresso na unidade massa solar.
+      * Atente-se ao númeor de casas decimais a serem impressas dos valores
+        float.
+    """
+    ### inicio
+    print(f'- Total de estrelas: {estatisticas_gerais['total_estrelas']} estrelas')
+    print(f'- Massa total: {int(estatisticas_gerais['massa_total'])} sóis')
+    print(f'- Temperatura média: {estatisticas_gerais['temperatura_media']:.2f} K')
+    print(f'- Mediana da luminosidade: {estatisticas_gerais['mediana_luminosidade']:.2f} L_sol')
+
+def busca_estrela(catalogo, id_estrela):
+    """
+    Busca uma estrela no catálogo por seu ID.
+
+    Parâmetros:
+      * catalogo (pandas.DataFrame): dataframe com catálogo de estrelas.
+      * id_estrela (int): ID da estrela que se deseja buscar.
+
+    Devolve:
+      * estrela (pandas.Series): "linha" de `catalogo` que corresponde a
+        estrela de ID `id_estrela`.
+
+    Dicas:
+      * O catálogo é indexado pelo ID (coluna `id`). Qual função(ões)
+        permite(m) recuperar entradas de um dataframe usando índices?
+    """
+    ### inicio
+    estrela = catalogo.iloc[id_estrela]
+    return estrela
+
+def imprime_dados_estrelas(catalogo, ids, colunas):
+    """
+    Imprime colunas específicas sobre estrelas específicas do catálogo estelar.
+
+    Parâmetros:
+      * catalogo (pandas.DataFrame): dataframe com catálogo de estrelas.
+      * ids (lis(int)): lista com IDs das estrelas que se deseja imprimir os
+        dados.
+      * colunas (list(str)): lista com nomes das colunas que se deseja
+        imprimir.
+
+    Dicas:
+      * Utilize um laço aninhado para percorrer cada ID em `ids` e cada coluna
+        em `colunas`.
+      * Use a função `busca_estrela()`.
+    """
+    ### inicio
+    for id in ids:
+      estrela = busca_estrela(catalogo, id)
+      print(f'ID {id}:')
+      for coluna in colunas:
+        print(f'- {coluna}: {estrela[coluna]}')
+
+def filtra_catalogo(catalogo, coluna, op_comp, valor):
+    """
+    Filtra um catálogo de estrelas sob valores de uma coluna. Isto é, a partir
+    de um catálogo passado como argumento, filtra apenas as entradas (linhas)
+    que tiverem valores em uma dada coluna (definida por argumento) que são <,
+    <=, ==, >=, ou > (definido por argumento) que um dado valor (definido por
+    argumento).
+
+    IMPORTANTE: assuma que apenas colunas com valores númericos são passadas
+    como argumento.
+
+    Parâmetros:
+      * catalogo (pandas.DataFrame): dataframe com catálogo de estrelas.
+      * coluna (str): string correspondendo a nome da coluna que se deseja usar
+        para filtrar.
+      * op_comp (int): inteiro de 1 a 5 representando a operação de comparação
+        que se deseja aplicar. O mapeamento do valor de `op_comp` com os
+        operadores é: 1: <, 2: <=, 3: ==, 4: >=, ou 5: >.
+      * valor (float): valor numérico a ser comparado na filtragem.
+
+    Devolve:
+      * catalogo_filtrado (pandas.DataFrame): dataframe com catálogo de
+        estrelas que foi filtrado com base nos argumentos passados.
+
+    Dicas:
+      * Use `valor` para compor o filtro, ou seja,
+        `filtro = ... valor`
+      * O filtro é um `pandas.Series` (um "dataframe de uma só coluna"), que
+        contém booleanos dizendo se a entrada atende (`True`) ou não (`False`)
+        a comparação.
+      * Para gerar `catalogo_filtrado`, "aplique" o filtro criado em uma
+        operação sobre `catalogo`.
+    """
+    ### inicio
+    (catalogo, coluna, op_comp, valor)
+    if op_comp == 1:
+      filtro = catalogo[coluna] < valor
+    elif op_comp == 2:
+      filtro = catalogo[coluna] <= valor
+    elif op_comp == 3:
+      filtro = catalogo[coluna] == valor
+    elif op_comp == 4:
+      filtro = catalogo[coluna] >= valor
+    elif op_comp == 5:
+      filtro = catalogo[coluna] > valor
+    catalogo_filtrado = catalogo[filtro]
+    return catalogo_filtrado
+
+def imprime_catalogo_filtrado(catalogo_filtrado):
+    """
+    Imprime catálogo estelar filtrado. Caso o catálogo filtrado não possua
+    nenhuma entrada (nenhuma passou pelo filtro), uma mensagem indicando tal
+    fato deve ser impressa no lugar do catálogo.
+
+    Parâmetros:
+      * catalogo_filtrado (pandas.DataFrame): dataframe com catálogo de
+        estrelas filtrado.
+
+    Dicas:
+      * Cheque se há entradas em `catalogo_filtrado` e faça a impressão de
+        acordo.
+    """
+    ### inicio
+    if len(catalogo_filtrado) == 0:
+      print(f'Nenhuma estrela atende o critério do filtro!')
+    else:
+      print(catalogo_filtrado)
+
+def deriva_cor(estrela):
+    """
+    Deriva a cor (classe espectral) de uma estrela.
+
+    Parâmetros:
+      * estrela (pandas.Series): entrada do catálogo que corresponde a estrela
+        a qual deseja-se derivar a cor.
+
+    Devolve:
+      * cor (str): string de um caractér que representa a cor da estrela
+        passada como argumento. Os valores que `cor` pode assumir são: "O",
+        "A", "F", "G", "K" ou "M".
+
+    Dicas:
+      * Ler campos de um `pandas.Series` é igual a ler campos de um dicionário.
+      * A forma de se derivar a cor a partir das características de uma estrela
+        está descrita no enunciado do EP3. Não tente adivinhar como derivá-la
+        ou utilizar uma outra referência!
+    """
+    ### inicio
+    temperatura = estrela['temperatura']
+    if temperatura >= 33000:
+        return 'O'
+    elif 10000 < temperatura < 33000:
+        return 'B'
+    elif 7300 < temperatura <= 10000:
+        return 'A'
+    elif 6000 < temperatura <= 7300:
+        return 'F'
+    elif 5300 < temperatura <= 6000:
+        return 'G'
+    elif 3900 < temperatura <= 5300:
+        return 'K'
+    else:
+        return 'M'
+
+def gera_catalogo_com_cor(catalogo):
+    """
+    Usa um catálogo de estrelas para gerar um novo catálogo estendido que
+    contém as cores (classes espectrais) das estrelas. Este novo catálogo é
+    idêntico ao passado como argumento (o catálogo base) apenas adicionado da
+    coluna `cor`.
+
+    Parâmetros:
+      * catalogo (pandas.DataFrame): dataframe com catálogo de estrelas.
+
+    Devolve:
+      * catalogo_com_cor (pandas.DataFrame): extensão de `catalogo` com a
+        coluna `cor` adicionada.
+
+    Dicas:
+      * Não tente modificar `catalogo`. Crie uma cópia dele e modifique a
+        cópia.
+      * Primeiro crie a coluna `cor` com um valor qualquer, e então passe por
+        cada entrada atualizando o campo `cor` de acordo.
+      * Use a função `deriva_cor()`.
+    """
+    ### inicio
+    catalogo_com_cor = catalogo.copy()
+    cores = []
+    for i, estrela in catalogo.iterrows():
+        cores.append(deriva_cor(estrela))
+    catalogo_com_cor["cor"] = cores
+    return catalogo_com_cor
+
+def imprime_catalogo_com_cor(catalogo_com_cor, nome_arquivo, n_primeiras):
+    """
+    Imprime as primeiras entradas do catálogo estelar com cor. Uma mensagem
+    indicando o nome do arquivo onde o catálogo com cor foi salvo também é
+    impressa.
+
+    Parâmetros:
+      * catalogo_com_cor (pandas.DataFrame): extensão do catálogo estelar
+        base com a coluna `cor` adicionada.
+      * nome_arquivo (str): string com nome do arquivo onde catálogo com cor
+        foi salvo.
+      * n_primeiras (int): quantas das primeiras estrelas do catálogo com cor
+        devem ser impressas.
+
+    Dicas:
+      * Existe uma função que permite você selecionar as n primeiras entradas
+        de um dataframe.
+    """
+    ### inicio
+    catalogo_com_cor.to_csv(nome_arquivo, index=False)
+    print(f"Catálogo com cor salvo com o nome {nome_arquivo}.")
+    print(f"As primeiras {n_primeiras} estrelas do catálogo são:")
+    print(catalogo_com_cor.head(n_primeiras))
+
+def deriva_coord_cart(estrela):
+    """
+    Deriva as coordenadas cartesianas de uma estrela.
+
+    Parâmetros:
+      * estrela (pandas.Series): entrada do catálogo que corresponde a estrela
+        a qual deseja-se derivar as coordenadas cartesianas.
+
+    Devolve:
+      * x (float): coordenada X da estrela.
+      * y (float): coordenada Y da estrela.
+      * z (float): coordenada Z da estrela.
+
+    Dicas:
+      * Use as funções `radians()`, `sin()` e `cos()` da biblioteca `math`.
+      * Atente-se que os ângulos de ascensão reta (coluna `ascensao_reta`) e
+        declinação (coluna `declinacao`) estão em graus e não radianos.
+      * A forma de se derivar as coordenadas cartesianas a partir das
+        características de uma estrela estão descritas no enunciado do EP3. Não
+        tente adivinhar como derivá-las ou utilizar uma outra referência!
+    """
+    ### inicio
+    a = math.radians(estrela['ascensao_reta'])
+    b = math.radians(estrela['declinacao'])
+    c = estrela['distancia']
+    x = c * math.cos(b) * math.cos(a)
+    y = c * math.cos(b) * math.sin(a)
+    z = c * math.sin(b)
+    return x, y, z
+
+def calcula_distancia(estrela_1, estrela_2):
+    """
+    Calcula a distância entre duas estrelas.
+
+    Parâmetros:
+      * estrela_1 (pandas.Series): entrada do catálogo que corresponde a uma
+        estrela.
+      * estrela_2 (pandas.Series): entrada do catálogo que corresponde a uma
+        estrela.
+
+    Devolve:
+      * d (float): disância entre a `estrela_1` e a `estrela_2`.
+
+    Dicas:
+      * Use a função `deriva_coord_cart()`.
+      * Use a função `abs()` para calcular o valor absoluto de um número.
+      * A fórmula de distância entre dois pontos cartesianos está descrita no
+        enunciado do EP3. Não tente adivinhá-la ou utilizar uma outra
+        referência!
+    """
+    ### inicio
+    x1, y1, z1 = deriva_coord_cart(estrela_1)
+    x2, y2, z2 = deriva_coord_cart(estrela_2)
+    distancia = math.sqrt((x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2)
+    return distancia
+
+def checa_rotas(catalogo, rotas, d_max):
+    """
+    Checa se uma sequência de rotas estelares é viável baseado em um catálogo
+    de estrelas e uma distância máxima. Para cada rota na sequência de rotas
+    (definida por argumento), a função usa o catálogo de estrelas (definido por
+    argumento) e a distância máxima (definida por argumento) para checar se
+    *cada* trecho da rota ultrapassa a distância máxima. Se *nenhum* trecho da
+    rota ultrapassar esta distância, então a rota é considerada viável, e
+    vice-versa.
+
+    Parâmetros:
+      * catalogo (pandas.DataFrame): dataframe com catálogo de estrelas.
+      * rotas (list(list(int))): lista com listas de IDs, representando as
+        rotas as serem checadas. Por exemplo, duas rotas 4-2344-35 e 1842-245
+        são representadas como `rotas = [[4, 2344, 35], [1842, 245]]`.
+      * d_max (float): distancia máxima entre *cada* trecho da rota.
+
+    Devolve:
+      * viabilidade_rotas (list(bool)): lista de booleanos que representa a
+        viabilidade de `rotas`. Por exemplo, considerando `rotas = [[4, 2344,
+        35], [1842, 245]]` e `d_max = 42`, se *apenas* o trecho 2344-35 tem
+        distância maior que 42, então temos `viabilidade_rotas = [False, True]`.
+
+    Dicas:
+      * Utilize um laço aninhado para percorrer cada rota em `rotas` e cada
+        trecho da rota.
+      * Note que em uma rota com 3 estrelas há 2 trechos (da 1a estrela à 2a
+        estrela e da 2a estrela à 3a estrela), então atente-se a "onde começar"
+        um dos laços.
+    """
+    ### inicio
+    viabilidade_rotas = []
+    for rota in rotas:
+        viavel = True
+        roda = True
+        if roda:
+          for i in range(len(rota) - 1):
+              estrela_1 = catalogo.loc[rota[i]]
+              estrela_2 = catalogo.loc[rota[i + 1]]
+              if calcula_distancia(estrela_1, estrela_2) > d_max:
+                  viavel = False
+                  roda = False
+        viabilidade_rotas.append(viavel)
+    return viabilidade_rotas
+
+def imprime_viabilidade_rotas(rotas, viabilidade_rotas):
+    """
+    Imprime as rotas estelares viáveis e as inviáveis.
+
+    Parâmetros:
+      * rotas (list(list(int))): lista com listas de IDs, representando as
+        rotas as serem checadas. Por exemplo, duas rotas 4-2344-35 e 1842-245
+        são representadas como `rotas = [[4, 2344, 35], [1842, 245]]`.
+      * viabilidade_rotas (list(bool)): lista de booleanos que representa a
+        viabilidade de `rotas`. Por exemplo, considerando `rotas = [[4, 2344,
+        35], [1842, 245]]` e `d_max = 42`, se *apenas* o trecho 2344-35 tem
+        distância maior que 42, então temos `viabilidade_rotas = [False, True]`.
+
+    Dicas:
+      * Primeiro construa a lista das rotas viáveis e inviáveis, depois itere
+        sobre cada uma imprimindo.
+      * Ao adicionar uma rota a uma das listas (viáveis ou inviáveis), use um
+        dicionário para "não esquecer" o número da rota.
+    """
+    ### inicio
+    rotas_viaveis = []
+    rotas_inviaveis = []
+    for i in range(len(viabilidade_rotas)):
+        if viabilidade_rotas[i]:
+            rotas_viaveis.append(f"Rota {i}: {rotas[i]}")
+        else:
+            rotas_inviaveis.append(f"Rota {i}: {rotas[i]}")
+    print("Rotas viáveis:")
+    for rota in rotas_viaveis:
+        print(f"- {rota}")
+    print("Rotas inviáveis:")
+    for rota in rotas_inviaveis:
+        print(f"- {rota}")
+
+#==============================================================================#
+#                             FUNÇÕES AUXILIARES                               #
+#==============================================================================#
+
+def configura_pandas():
+    pd.set_option('display.min_rows', 20)
+    pd.set_option('display.max_rows', 20)
+
+def le_dados():
+    catalogo = pd.read_csv("https://raw.githubusercontent.com/alvesisaque/data_EP3/refs/heads/main/stars_catalogue.csv", index_col="id")
+    return catalogo
+
+def salva_catalogo(catalogo, nome_arquivo):
+    catalogo.to_csv(nome_arquivo)
+
+
+#==============================================================================#
+#                     FUNÇÕES P/ INTERAÇÃO COM O USUÁRIO                       #
+#==============================================================================#
+
+def coleta_ids_colunas(catalogo):
+    input_valido = True
+
+    ids_str = input("Entre os IDs separados por vírgulas: ")
+    ids = []
+    for ID in ids_str.split(","):
+        ids.append(int(ID.strip()))
+    max_id = catalogo.index.max()
+    min_id = catalogo.index.min()
+    for ID in ids:
+        if not (min_id <= ID <= max_id):
+            input_valido = False
+
+    colunas_str = input("Entre as colunas separadas por vírgulas: ")
+    colunas = []
+    for coluna in colunas_str.split(","):
+        colunas.append(coluna.strip())
+    for coluna in colunas:
+        if coluna not in list(catalogo.columns):
+            input_valido = False
+
+    return input_valido, ids, colunas
+
+def coleta_filtro():
+    input_valido = True
+
+    coluna = ""
+    print('Colunas disponíveis para filtrar:')
+    print('1. Massa')
+    print('2. Luminosidade')
+    print('3. Temperatura')
+    print('4. Distância')
+    print('5. Ascensão Reta')
+    print('6. Declinação')
+    n_coluna = int(input("Selecione número da coluna [1-6]: "))
+    if n_coluna not in [1, 2, 3, 4, 5, 6]:
+        input_valido = False
+    else:
+        colunas = ["massa", "luminosidade", "temperatura", "distancia",
+                   "ascensao_reta", "declinacao"]
+        coluna = colunas[n_coluna-1]
+
+    print('Operações de comparação:')
+    print(f'{"1. <":8}{"2. <=":8}{"3. ==":8}{"4. >=":8}{"5. >":8}')
+    op_comp = int(input("Selecione número da operação de comparação [1-5]: "))
+    if op_comp not in [1, 2, 3, 4, 5]:
+        input_valido = False
+
+    valor = float(input("Entre valor a ser comparado: "))
+
+    return input_valido, coluna, op_comp, valor
+
+def coleta_rotas(catalogo):
+    max_id = catalogo.index.max()
+    min_id = catalogo.index.min()
+    input_valido = True
+    coleta_rota = True
+    rotas = []
+
+    print("Uma rota é uma lista de (pelo menos 2) IDs separados por vírgulas.")
+    print("Entre uma rota vazia (sem nenhum caractere) para encerrar a adição.")
+    i = 0
+    while coleta_rota:
+        ids_str = input(f"Rota {i}: ")
+        if len(ids_str) == 0:
+            coleta_rota = False
+        else:
+            ids = []
+            for ID in ids_str.split(","):
+                ids.append(int(ID.strip()))
+            for ID in ids:
+                if not (min_id <= ID <= max_id):
+                    input_valido = False
+                    coleta_rota = False
+            if len(ids) < 2:
+                input_valido = False
+                coleta_rota = False
+            rotas.append(ids)
+        i += 1
+
+    return input_valido, rotas
+
+
+#==============================================================================#
+#                                 FUNÇÃO MAIN                                  #
+#==============================================================================#
+
+def main():
+    configura_pandas()
+    catalogo = le_dados()
+
+    operacao = -1
+    while operacao != 0:
+        print()
+        print("="*70)
+        print(" "*22 + "CATÁLOGO ESTELAR MAC-011X")
+        print("="*70)
+        print("Selecione a operação desejada:")
+        print("(1) ESTATÍSTICAS GERAIS")
+        print("    -> Mostra estatísticas sobre o catálogo")
+        print("(2) DADOS DE ESTRELAS")
+        print("    -> Exibe dados de estrelas específicas do catálogo")
+        print("(3) FILTRAR CATÁLOGO")
+        print("    -> Filtra estrelas por coluna")
+        print("(4) CRIAR CATÁLOGO COM COR")
+        print("    -> Cria catálogo com a coluna 'cor' (classe espectral)")
+        print("(5) CHECA ROTAS ESTELARES")
+        print("    -> Checa se uma sequência de rotas são viáveis")
+        print("(0) SAIR")
+        print()
+        operacao = int(input("Digite o número da operação desejada: "))
+        print("="*70)
+
+        input_valido = True
+
+        if operacao == 1:
+            estatisticas_gerais = gera_estatisticas_gerais(catalogo)
+            imprime_estatisticas_gerais(estatisticas_gerais)
+        elif operacao == 2:
+            input_valido, ids, colunas = coleta_ids_colunas(catalogo)
+            print("="*70)
+            if input_valido:
+                imprime_dados_estrelas(catalogo, ids, colunas)
+        elif operacao == 3:
+            input_valido, coluna, op_comp, valor = coleta_filtro()
+            print("="*70)
+            if input_valido:
+                catalogo_filtrado = filtra_catalogo(catalogo, coluna, op_comp, valor)
+                imprime_catalogo_filtrado(catalogo_filtrado)
+        elif operacao == 4:
+            catalogo_com_cor = gera_catalogo_com_cor(catalogo)
+            salva_catalogo(catalogo_com_cor, "catalogo_com_cor.csv")
+            imprime_catalogo_com_cor(catalogo_com_cor, "catalogo_com_cor.csv", 20)
+        elif operacao == 5:
+            input_valido, rotas = coleta_rotas(catalogo)
+            print("="*70)
+            if input_valido:
+                viabilidade_rotas = checa_rotas(catalogo, rotas, 2000)
+                imprime_viabilidade_rotas(rotas, viabilidade_rotas)
+        elif operacao == 0:
+            print("Encerrando o programa...")
+        else:
+            print("Operação inválida. Tente novamente.")
+
+        if not input_valido:
+            print("Parâmetro(s) inválido(s)!")
+
+
+if __name__ == '__main__':
+    main()
